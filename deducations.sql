@@ -49,6 +49,69 @@ CREATE TABLE proc_logs (
     FOREIGN KEY(type_operation_id) REFERENCES type_operation(id)
 );
 
+-- Заполнение таблицы type_deduction
+INSERT INTO type_deduction (name, deduction_amount) VALUES 
+('Детский вычет', 2),
+('Вычет ветеранам', 12);
+
+-- Заполнение таблицы type_operation
+INSERT INTO type_operation (name) VALUES 
+('Налоговая база'),
+('НДФЛ');
+
+-- Заполнение таблицы employee
+INSERT INTO employee (name, salary, is_veteran) VALUES 
+('Иванов Иван Иванович', 50000.00, TRUE),
+('Петров Петр Петрович', 75000.00, FALSE),
+('Сидорова Анна Михайловна', 60000.00, FALSE),
+('Кузнецов Дмитрий Сергеевич', 45000.00, TRUE),
+('Смирнова Елена Владимировна', 80000.00, FALSE),
+('Федоров Алексей Николаевич', 55000.00, FALSE),
+('Николаева Ольга Дмитриевна', 65000.00, TRUE),
+('Васильев Михаил Андреевич', 70000.00, FALSE),
+('Павлова Татьяна Ивановна', 48000.00, FALSE),
+('Козлов Артем Викторович', 90000.00, TRUE);
+
+-- Заполнение таблицы child
+INSERT INTO child (name, birth_date, parent_id) VALUES 
+('Иванова Мария Ивановна', '2015-07-12', 1),
+('Иванов Алексей Иванович', '2018-03-25', 1),
+('Петрова Дарья Петровна', '2020-11-05', 2),
+('Сидоров Максим Антонович', '2005-09-18', 3),
+('Сидорова Виктория Антоновна', '2010-12-30', 3),
+('Кузнецова Алина Дмитриевна', '2017-02-14', 4),
+('Смирнов Игорь Евгеньевич', '2004-06-22', 5),
+('Федорова Ксения Алексеевна', '2019-08-15', 6),
+('Николаев Артем Олегович', '2016-05-10', 7),
+('Николаева Софья Олеговна', '2014-04-03', 7),
+('Васильева Анастасия Михайловна', '2013-07-28', 8),
+('Павлов Денис Тимурович', '2003-01-20', 9),
+('Козлова Полина Артемовна', '2018-09-17', 10),
+('Козлов Тимофей Артемович', '2021-10-05', 10);
+
+-- Заполнение таблицы accrual
+INSERT INTO accrual (employee_id, type_operation_id, amount) VALUES 
+(1, 1, 50000.00),
+(1, 2, 6500.00),
+(2, 1, 75000.00),
+(2, 2, 9750.00),
+(3, 1, 60000.00),
+(3, 2, 7800.00),
+(4, 1, 45000.00),
+(4, 2, 5850.00),
+(5, 1, 80000.00),
+(5, 2, 10400.00),
+(6, 1, 55000.00),
+(6, 2, 7150.00),
+(7, 1, 65000.00),
+(7, 2, 8450.00),
+(8, 1, 70000.00),
+(8, 2, 9100.00),
+(9, 1, 48000.00),
+(9, 2, 6240.00),
+(10, 1, 90000.00),
+(10, 2, 11700.00);
+
 DELIMITER //
 CREATE FUNCTION CalculateTaxBase(p_employee_id INT)
 RETURNS DECIMAL(8, 2)
@@ -100,10 +163,9 @@ CREATE TRIGGER LogAccruals AFTER INSERT ON accrual
 FOR EACH ROW BEGIN
     DECLARE temp_amount DECIMAL(8, 2);
     DECLARE operation_type INT;
-    SET temp_amount = IF(NEW.ndfl_amount IS NOT NULL, NEW.ndfl_amount, NEW.ndfl_base);
-    SET operation_type = IF(NEW.ndfl_amount IS NOT NULL, 2, 1);
 
     INSERT INTO proc_logs(employee_id, type_operation_id, amount)
-    VALUES (NEW.employee_id, operation_type, temp_amount);
+    VALUES (NEW.employee_id, NEW.type_operation_id, NEW.amount);
 
 END //
+

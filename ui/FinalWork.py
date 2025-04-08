@@ -2,10 +2,6 @@
 from PyQt6.QtWidgets import (
     QMainWindow,
     QComboBox,
-    QRadioButton,
-    QButtonGroup,
-    QPushButton,
-    QCheckBox,
     QLabel,
     QVBoxLayout,
     QHBoxLayout,
@@ -13,17 +9,21 @@ from PyQt6.QtWidgets import (
     QWidget,
     QSpacerItem,
     QSizePolicy,
+    QGroupBox,
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from qt_material import apply_stylesheet
+
+from dbhelper import Database
 
 
 class Deducations(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Калькулятор НДФЛ")
-        self.setFixedSize(600, 500)
+        self.setMinimumSize(650, 500)
+        self.setMaximumSize(1000, 500)
 
         # Initialize UI components
         self.init_ui()
@@ -35,7 +35,7 @@ class Deducations(QMainWindow):
         widget = QWidget()
         self.setCentralWidget(widget)
         v_layout = QVBoxLayout()
-        v_layout.setContentsMargins(0, 20, 0, 0)
+        v_layout.setContentsMargins(20, 20, 20, 20)
         widget.setLayout(v_layout)
 
         # Create and configure heading
@@ -46,11 +46,13 @@ class Deducations(QMainWindow):
             QSpacerItem(20, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         )
         # Create and configure employee selection
+        employees: list[str] = [employee[1] for employee in Database.get_employees()]
         self.employeeComboBox = QComboBox()
         self.employeeComboBox.setMinimumWidth(250)
         self.employeeComboBox.setSizePolicy(
             QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed
         )
+        self.employeeComboBox.addItems(employees)
         employee_label = QLabel("Сотрудник:")
         employee_label.setObjectName("employee_label")
         employee_label.setFont(QFont("Arial", 24, QFont.Weight.Bold))
@@ -64,6 +66,13 @@ class Deducations(QMainWindow):
 
         # Add header layout to main layout
         v_layout.addLayout(self.header)
+
+        benefits_group = QGroupBox("Право на вычет по льготам:")
+        calculations = QGroupBox("Расчеты:")
+        benefit_calculation_layout = QHBoxLayout()
+        benefit_calculation_layout.addWidget(benefits_group)
+        benefit_calculation_layout.addWidget(calculations)
+        v_layout.addLayout(benefit_calculation_layout)
         v_layout.addStretch(1)
 
     def init_styles(self):
