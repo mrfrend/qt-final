@@ -31,6 +31,14 @@ class EmployeeComboBox(QWidget):
 
         self.combo_box.currentIndexChanged.connect(self.on_employee_changed)
 
+        self.setStyleSheet(
+            """
+            QComboBox {
+                color: white;               
+            }
+
+        """
+        )
         self.setLayout(h_layout)
 
     @property

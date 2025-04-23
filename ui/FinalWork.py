@@ -99,11 +99,6 @@ class Deducations(QMainWindow):
                 color: yellow;
                 
             }
-
-            #employee_label {
-                font-size: 24px;
-                font-weight: bold;
-            }
             """
         )
 

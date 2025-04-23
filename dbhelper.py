@@ -47,7 +47,7 @@ class Database:
         cls, employee_id: int, operation_id: int, selected_priviliges: list[bool]
     ) -> float | None:
         try:
-            # Count the number of parameters to determine the position of the OUT parameter
+
             num_params = (
                 2 + len(selected_priviliges) + 1
             )  # employee_id, operation_id, privileges, result
@@ -55,7 +55,7 @@ class Database:
                 "CalculateTaxBaseOrNDFL",
                 (employee_id, operation_id, *selected_priviliges, 0),
             )
-            # Get the OUT parameter (result) - it's the last parameter
+
             cursor.execute(f"SELECT @_CalculateTaxBaseOrNDFL_{num_params - 1}")
             calculation = cursor.fetchone()[0]
             print(f"Calculation result: {calculation}")

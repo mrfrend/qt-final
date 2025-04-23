@@ -7,5 +7,5 @@ if __name__ == "__main__":
     app = QApplication([])
     window = Deducations()
     window.show()
-    apply_stylesheet(app, theme="dark_teal.xml")
+    apply_stylesheet(app, theme="dark_lightgreen.xml")
     app.exec()
