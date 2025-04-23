@@ -1,4 +1,5 @@
 import MySQLdb as mdb
+from state import REALISED_BENEFITS
 
 db = mdb.connect(host="localhost", user="root", password="", database="deductions")
 cursor = db.cursor()
@@ -56,7 +57,9 @@ class Database:
                 (employee_id, operation_id, *selected_priviliges, 0),
             )
 
-            cursor.execute(f"SELECT @_CalculateTaxBaseOrNDFL_{num_params - 1}")
+            cursor.execute(
+                f"SELECT @_CalculateTaxBaseOrNDFL_{num_params - 1}"
+            )  # Получаем по индексу, поэтому -1
             calculation = cursor.fetchone()[0]
             print(f"Calculation result: {calculation}")
             return calculation
@@ -86,9 +89,32 @@ class Database:
 
             amount_of_children = cls.get_amount_of_children(employee_id)
             priviliges = cls.get_type_deductions()
-            priviligy_access = dict(
-                zip(priviliges, map(bool, [is_veteran, amount_of_children]))
+            priviligy_access = {}
+            no_access_priviliges_left: list[int] = [0] * (
+                len(priviliges) - REALISED_BENEFITS
             )
+
+            if len(no_access_priviliges_left) == 0:
+                priviligy_access = dict(
+                    zip(
+                        priviliges,
+                        map(bool, [is_veteran, amount_of_children]),
+                    )
+                )
+            else:
+                priviligy_access = dict(
+                    zip(
+                        priviliges,
+                        map(
+                            bool,
+                            [
+                                is_veteran,
+                                amount_of_children,
+                                *no_access_priviliges_left,
+                            ],
+                        ),
+                    )
+                )
 
             return priviligy_access
 

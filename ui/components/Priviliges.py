@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QGroupBox, QVBoxLayout, QCheckBox, QButtonGroup
 from dbhelper import Database
+from state import REALISED_BENEFITS
 
 
 class Priviliges(QGroupBox):
@@ -10,13 +11,15 @@ class Priviliges(QGroupBox):
         self.init_ui()
 
     def init_ui(self):
-        self.checkboxes.setExclusive(False)
+        self.checkboxes.setExclusive(True)
         self.setLayout(self.layout)
         self.update_content(1)
 
     @property
     def selected_priviliges(self):
-        return [checkbox.isChecked() for checkbox in self.checkboxes.buttons()]
+        return [checkbox.isChecked() for checkbox in self.checkboxes.buttons()][
+            :REALISED_BENEFITS
+        ]
 
     def update_content(self, employee_id: int):
         self.clear_layout()
