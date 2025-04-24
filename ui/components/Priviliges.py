@@ -11,7 +11,7 @@ class Priviliges(QGroupBox):
         self.init_ui()
 
     def init_ui(self):
-        self.checkboxes.setExclusive(True)
+        self.checkboxes.setExclusive(False)
         self.setLayout(self.layout)
         self.update_content(1)
 
